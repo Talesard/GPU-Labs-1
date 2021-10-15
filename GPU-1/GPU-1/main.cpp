@@ -49,7 +49,7 @@ void print_info() {
 int main() {
 	print_info();
 
-	const int SIZE = 128;
+	const int SIZE = 11;
 	int* data = new int[SIZE];
 	int* res = new int[SIZE];
 	for (int i = 0; i < SIZE; i++) {
@@ -96,7 +96,11 @@ int main() {
 
 	size_t global_item_size = SIZE;
 	size_t local_item_size = 0;
-	err = clEnqueueNDRangeKernel(queue, kernel, 1, NULL, &global_item_size, NULL, 0, NULL, NULL);
+	// must be: global % local = 0
+	clGetKernelWorkGroupInfo(kernel, device_id, CL_KERNEL_WORK_GROUP_SIZE, sizeof(size_t), &local_item_size, NULL);
+	// std::cout << local_item_size << std::endl;
+	err = clEnqueueNDRangeKernel(queue, kernel, 1, NULL, &global_item_size,
+		(local_item_size <= global_item_size && global_item_size % local_item_size == 0) ? &local_item_size : NULL, 0, NULL, NULL);
 	// std::cout << "clEnqueueNDRangeKernel err: " << err << std::endl;
 	clFinish(queue);
 	clEnqueueReadBuffer(queue, output, CL_TRUE, 0, sizeof(float) * SIZE, res, 0, NULL, NULL);
