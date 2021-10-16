@@ -1,6 +1,6 @@
 #define _CRT_SECURE_NO_WARNINGS
 #define MAX_SOURCE_SIZE (0x100000)
-#define GPU_CPU 0 // 0-gpu, 1-cpu
+#define GPU_CPU 1 // 0-gpu, 1-cpu
 #include <CL/cl.h>
 #include <iostream>
 
@@ -49,7 +49,7 @@ void print_info() {
 int main() {
 	print_info();
 
-	const int SIZE = 11;
+	const int SIZE = 256;
 	int* data = new int[SIZE];
 	int* res = new int[SIZE];
 	for (int i = 0; i < SIZE; i++) {
@@ -94,19 +94,17 @@ int main() {
 	clSetKernelArg(kernel, 1, sizeof(cl_mem), &output);
 	clSetKernelArg(kernel, 2, sizeof(int), &SIZE);
 
-	size_t global_item_size = SIZE;
-	size_t local_item_size = 0;
-	// must be: global % local = 0
-	clGetKernelWorkGroupInfo(kernel, device_id, CL_KERNEL_WORK_GROUP_SIZE, sizeof(size_t), &local_item_size, NULL);
-	// std::cout << local_item_size << std::endl;
-	err = clEnqueueNDRangeKernel(queue, kernel, 1, NULL, &global_item_size,
-		(local_item_size <= global_item_size && global_item_size % local_item_size == 0) ? &local_item_size : NULL, 0, NULL, NULL);
+	size_t global_item_size = SIZE; // SIZE=256
+	size_t local_item_size = 8;
+
+
+	err = clEnqueueNDRangeKernel(queue, kernel, 1, NULL, &global_item_size, &local_item_size, 0, NULL, NULL);
 	// std::cout << "clEnqueueNDRangeKernel err: " << err << std::endl;
 	clFinish(queue);
 	clEnqueueReadBuffer(queue, output, CL_TRUE, 0, sizeof(float) * SIZE, res, 0, NULL, NULL);
-	for (int i = 0; i < SIZE; i++) {
-		std::cout << data[i] << " + global_id = " << res[i] << std::endl;
-	}
+	//for (int i = 0; i < SIZE; i++) {
+	//	std::cout << data[i] << " + global_id = " << res[i] << std::endl;
+	//}
 	clReleaseMemObject(input);
 	clReleaseMemObject(output);
 	clReleaseProgram(program);
