@@ -168,10 +168,12 @@ void test_double(int N, size_t local_sz) {
 
 int main() {
 	const int N = 256 * 450000;
-	size_t local_size = 255;
+	size_t local_size = 256;
 	print_info();
+
 	test_float(N, local_size);
 	std::cout << "\n\n" << std::endl;
 	test_double(N, local_size);
+
 	return 0;
 }
