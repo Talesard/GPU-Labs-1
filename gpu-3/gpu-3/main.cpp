@@ -5,8 +5,7 @@
 #include <random>
 #include "ocl_helpers.h"
 #include "matrix_mult.h"
-#define EPS 1e-1
-
+#define EPS 1e-3
 
 float* get_random_matrix(int m, int n) {
 	std::random_device dev;
