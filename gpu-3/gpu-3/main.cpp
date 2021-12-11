@@ -48,9 +48,9 @@ int main() {
 	float t0;
 	float t1;
 
-	const int m = 1600; //1600
-	const int n = 1600;
-	const int k = 1600;
+	const int m = 16 * 100; //1600
+	const int n = 16 * 100;
+	const int k = 16 * 100;
 
 	float* A = get_random_matrix(m, n);
 	float* B = get_random_matrix(n, k);
@@ -105,11 +105,10 @@ int main() {
 	mult_image_cl(A, B, Res_image_gpu_cl, m, n, k, 0);
 	std::cout << "Check image gpu cl: " << check_res(Res_classic_cpu, Res_image_gpu_cl, m * k) << std::endl << std::endl;
 
-	//// tmp
 	//print_matrix(A, m, n);
-	//std::cout << "\nx" << std::endl;
+	//std::cout << "\n\n\t\tx" << std::endl;
 	//print_matrix(B, n, k);
-	//std::cout << "\nx" << std::endl;
+	//std::cout << "\n\n\t\t=" << std::endl;
 	//print_matrix(Res_classic_cpu, m, k);
 
 	return 0;
